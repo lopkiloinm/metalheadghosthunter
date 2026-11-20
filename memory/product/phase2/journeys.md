@@ -1,0 +1,36 @@
+# Phase 2 Journeys (Phase 1 journeys JRN-1..14 stay valid)
+
+- **JRN-15**: Scroll to Spectre Intel, type "Beaumaris Gaol" and click "Summon Intel".
+  - Expected: a loading state appears and the button is disabled. Then up to 6 dossier cards show, each with a title, snippet, source domain and a link that opens in a new tab.
+- **JRN-16**: After the results load, look at Recommended Arsenal and click "Add to Crate" on one item.
+  - Expected: 1–3 gear items are shown. Adding one shows a toast and the navbar crate badge goes up by 1.
+- **JRN-17**: In the Raid Planner, click "Investigate" on a hotspot.
+  - Expected: the page scrolls to Spectre Intel, the input holds the hotspot name, and the results load.
+- **JRN-18**: Click a quick-pick hotspot chip.
+  - Expected: a search runs for that hotspot.
+- **JRN-19**: Submit an empty query, or a single character.
+  - Expected: inline validation appears and no network call is made.
+- **JRN-20**: The backend You.com call fails (simulate with an invalid key or a forced error).
+  - Expected: "The spirits are silent. Try again shortly." with a retry button, and the page stays usable.
+- **JRN-21**: Search a nonsense string that returns no results.
+  - Expected: "No echoes found for this place." with hotspot chips.
+- **JRN-22**: Repeat the same query within 10 minutes via the API.
+  - Expected: the response has `cached: true` and arrives faster.
+- **JRN-23**: Inspect the frontend bundle and the /api/intel responses.
+  - Expected: the YDC_API_KEY value does not appear anywhere.
+- **JRN-24**: View Spectre Intel at 375px and 1440px.
+  - Expected: cards are readable with no overflow and no horizontal scroll.
+- **JRN-25**: Inspector: pick 3/4, then Macro, then Overhead, then drag the model each time.
+  - Expected: the camera glides to each preset, and dragging rotates the model afterwards with no snap-back.
+- **JRN-26**: Hero at 1440, 1920 and 2560 widths.
+  - Expected: no element overlaps the 3D stage area.
+- **JRN-27**: Map of the Restless, illustrated chart.
+  - Expected: shows the strait, roads, station, Column, St Mary's, compass, legend and numbered hotspot key. Labels appear on hover or tap.
+- **JRN-28**: Live map.
+  - Expected: dark tiles load via `/api/map/tiles`. Hotspot markers have popups with lore and an Investigate button that runs Spectre Intel. The Forge marker is present. Walking routes show distance and time. The Hotspots, Routes and Sightings toggles hide and show their layers. Sighting markers are shown.
+- **JRN-29**: Submit a field log pinned to a hotspot.
+  - Expected: it appears at the top of the list and as a new pin on the live map.
+- **JRN-30**: Scroll the page over the live map without clicking it.
+  - Expected: the page scrolls and the map does not zoom.
+- **JRN-31**: Check the CARTO key.
+  - Expected: it never appears in the frontend bundle or in any API/tile response body or headers.

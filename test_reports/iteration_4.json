@@ -1,0 +1,38 @@
+{
+  "summary": "Iteration 4: CARTO tile proxy + iteration_3 bug retests. Backend 45/45 pytest pass (new tests/test_map_tiles.py, 10 tests) + unit fallback checks pass (bogus/empty/unset key -> esri-fallback, image/jpeg, MISS then HIT). Key never leaks (status, openapi, tile and health responses and headers, frontend src, built JS, Vite-served modules). Frontend: live map data-tile-source=carto, all 12 tiles from /api/map/tiles/, attribution 'Leaflet | (c) OpenStreetMap contributors (c) CARTO', dark CARTO tiles with no watermark. Fixed: 375px key clipping (investigate buttons right=342, no horizontal scroll at 375/768/1440), pending pin cleared after submit, typed text kept on pin move, station sign fits (4.5px gap each side), Platform Shakedown fly-to max tile z=16, desktop sigil click shows the label. STILL FAILING: the HIGH sigil tap bug in a mobile touch context (is_mobile+has_touch). Regression smoke passes: layer toggles, popup Investigate -> Intel (1 live You.com call, 6 results), recommended add -> crate badge 0->1, inspector camera preset + drag.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/map/tiles/{z}/{x}/{y}.png", "issue": "Fallback Esri tiles (served when one CARTO tile fails transiently) are stored in the LRU under the same coord and sent with 'public, max-age=86400, immutable'. One CARTO hiccup leaves an Esri tile mixed into the CARTO map until LRU eviction, and in browsers for a day. Suggest a short max-age and no LRU entry when source is esri-fallback while status is carto."},
+      {"endpoint": "/api/map/tiles", "issue": "If CARTO starts rejecting the key mid-TTL, _carto() still returns the 200 image/png watermark, so watermark tiles are served and cached until the 10-min status re-probe. tile_status() has no asyncio.Lock, so on a cold start many concurrent tile requests all run the probe."},
+      {"endpoint": "/api/map/tiles (preview ingress)", "issue": "Info only: ingress rewrites Cache-Control to 'no-store, no-cache, must-revalidate'. On localhost:8001 the header is 'public, max-age=86400, immutable' as designed."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "IllustratedMap HotspotSigils", "issue": "HIGH (iteration_3 bug still open on touch): tapping a sigil in a mobile touch context shows no label. Event trace: touchstart, touchend, mouseenter, mousedown, focus (label mounts), mouseup, click, then mouseleave x3, which runs setActive(null) and unmounts the label. Desktop click works.", "selector": "[data-testid^=illustrated-hotspot-spot-]", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Illustrated map station sign", "issues": ["The 58-letter sign text now fits but renders at fontSize 8.4 squeezed by textLength. It is hard to read at desktop sizes and unreadable on mobile. Consider a taller rect with 2 lines or a larger font."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_map_tiles.py", "/app/backend/tests/test_map_api.py", "/app/backend/tests/test_forge_api.py", "/app/backend/tests/test_intel_api.py", "/app/test_reports/pytest/pytest_results_iter4.xml"],
+  "action_items": [
+    "Fix sigil tap on touch: replace onMouseEnter/onMouseLeave with onPointerEnter/onPointerLeave that act only when e.pointerType === 'mouse' (or ignore mouseleave for ~500ms after a click/touch). Keep onClick -> setActive(h.id), and keep the background rect onClick -> setActive(null). Retest with a Playwright context (is_mobile=True, has_touch=True) using touchscreen.tap.",
+    "(minor) Don't LRU-cache or immutable-cache esri-fallback tiles while status.source is carto. Add an asyncio.Lock around the tile_status probe."
+  ],
+  "critical_code_review_comments": [
+    "map_tiles.py: fallback tiles are cached with the same immutable headers as CARTO tiles (see minor issue).",
+    "map_tiles.py: no lock on the status probe, which can cause a thundering herd on cold start.",
+    "InteractiveMap useTileSource: the error counter is cumulative and never resets, so 3 transient tile errors over a long session switch to Esri for good. Consider counting only consecutive errors (reset on tileload).",
+    "IllustratedMap: the hover handlers conflict with tap on touch devices (root cause of the open HIGH bug)."
+  ],
+  "updated_files": ["/app/backend/tests/test_map_tiles.py"],
+  "success_rate": {"backend": "100% (45/45 + fallback unit checks)", "frontend": "~92% (12/13 checks; mobile sigil tap fails)"},
+  "seed_data_creation": "Created 1 sighting (hunterName TEST_PinHunter, id log-071a8fda) via the UI pin flow. Deleted by _id via Mongo; confirmed absent from /api/sightings.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Run: cd /app/backend && export REACT_APP_BACKEND_URL=<frontend/.env> && pytest tests/ -p no:xdist (CARTO_API_KEY is already in the process env, not in backend/.env). Fallback unit check: CARTO_API_KEY=bogus python3 script calling routers.map_tiles.tile_status()/map_tile(). On desktop, wait about 1s after scrollIntoView before clicking sigils: the Reveal animation shifts the layout and the first click can miss. Mobile: browser.new_context(is_mobile=True, has_touch=True, iPhone UA), then touchscreen.tap on the sigil center. To check map zoom, read the max z of .leaflet-tile-loaded src. Use the exact testid map-route-route-<id> (the map-route- prefix also matches map-route-list).",
+  "rca of the issue": "Sigil tap: Chromium touch emulation fires compat mouse events on tap (mouseenter, mousedown, focus, mouseup, click), then mouseleave when the touch ends. The g element's onMouseLeave={() => setActive(null)} clears the label the click just set, so it disappears in the same frame. Desktop is unaffected because the pointer stays over the sigil. Mitigation: gate hover handlers on pointerType === 'mouse'."
+}

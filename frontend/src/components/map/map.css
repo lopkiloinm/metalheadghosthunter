@@ -1,0 +1,47 @@
+.forge-map .leaflet-container {
+  background: #07090a;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+}
+.forge-map .leaflet-popup-content-wrapper,
+.forge-map .leaflet-popup-tip {
+  background: #0d0b0a;
+  color: #f4ede4;
+  border: 1px solid rgba(255, 74, 28, 0.45);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+.forge-map .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+}
+.forge-map .leaflet-popup-content {
+  margin: 14px 16px;
+  min-width: 220px;
+}
+.forge-map .leaflet-popup-close-button {
+  color: #c9bfb2 !important;
+}
+.forge-map .leaflet-control-zoom a {
+  background: #0d0b0a;
+  color: #f4ede4;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.forge-map .leaflet-control-attribution {
+  background: rgba(7, 9, 10, 0.8);
+  color: #9a9087;
+}
+.forge-map .leaflet-control-attribution a {
+  color: #e8b04a;
+}
+.forge-map .leaflet-tooltip {
+  background: #0d0b0a;
+  color: #f4ede4;
+  border: 1px solid rgba(232, 176, 74, 0.5);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+}
+.forge-map .sigil-icon {
+  background: none;
+  border: none;
+}
+.forge-map.picking .leaflet-container {
+  cursor: crosshair;
+}

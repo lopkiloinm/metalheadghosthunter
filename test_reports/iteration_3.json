@@ -1,0 +1,42 @@
+{
+  "summary": "Tested the 'Map of the Restless' feature end to end. Backend: 35/35 pytest pass (the new test_map_api.py has 13 tests, plus the forge and intel regression suites). Frontend: most map flows work at 1440: the navbar Map link, lazy-loading of the Leaflet chunk, 9 live markers (5 hotspots, Forge, 3 sightings), hotspot and sighting popups, popup and key Investigate (scroll to Intel and run the search), the 3 layer toggles with aria-pressed, route stats and fly-to, no scroll hijack, both pin flows (pick on the map, and pin at the haunt) with the new marker showing, and the mobile engage/release buttons. The regression smoke passed: hero 3D, add-to-crate badge 0->1, inspector presets and drag, Intel search (1 live You.com call). Bugs found: (1) clicking or tapping an illustrated sigil does not show its label, so labels never appear on touch; (2) at 375px the overview grid is 382px wide and its right edge is clipped by about 27px; (3) the station sign text overflows its box; (4) the temporary pending-pin marker stays on the map after the sighting is submitted.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "DB data", "issue": "The sightings collection holds 2 non-TEST records that are not seeded data: tscheck-log-39950150 and tscheck-log-mwpgk04v (location 'Somewhere'). They predate this run (created 20:53/20:55, probably by the main agent's own checks). They show in the Field Logs ledger. I did not touch them."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "IllustratedMap HotspotSigils", "issue": "Clicking or tapping a sigil shows no label. Mouse: mouseenter/focus sets active, then onClick runs setActive(on ? null : h.id) and clears it. Touch: the emulated mouseenter/focus fire before click, so a tap also cancels itself. Verified: hover shows the label; a real click (1440) gives 0 labels; a tap on an iPhone UA at 375 gives 0 labels. The 'hover or tap labels' requirement fails on touch.", "selector": "[data-testid^=illustrated-hotspot-] -> [data-testid=illustrated-hotspot-label]", "priority": "HIGH"},
+      {"component": "MapSection overview grid (mobile)", "issue": "At 375px the first grid (illustrated map plus hotspot key) is 382px wide (x 20 to 402). Root overflow-x-clip hides the overflow, so document scrollWidth stays 375, but the right edge of the illustrated card, its scroller and the hotspot key rows is cut off. The map-key-investigate-* buttons are half clipped (x 357-389). Root cause: the second <Reveal delay={100} className='space-y-4 lg:col-span-4 ...'> is missing min-w-0, so the truncated hotspot names push the implicit auto grid track out to min-content. The live-map grid has min-w-0 on both columns and is fine (335px). Fix: add min-w-0 to that Reveal, or grid-cols-1 to the grid.", "selector": "[data-testid=map-hotspot-key], [data-testid=illustrated-map-scroller]", "priority": "MEDIUM"},
+      {"component": "InteractiveMap pending pin", "issue": "After a pinned sighting is submitted, MapSection's pendingPin is never cleared. App only clears logPin. The untitled pending marker stays next to the new 'Sighting by ...' marker (1 untitled .leaflet-marker-icon remains), so one log shows as two markers. Also, the new sighting marker is fanned 34px away from the tapped spot when it is within 400m of a haunt. Fix: clear pendingPin when logPin returns to null or the sighting is created, for example via a callback or effect.", "selector": ".leaflet-marker-icon:not([title])", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Illustrated map station sign", "issues": ["The 58-letter text (fontSize 8.4, about 300px wide) overflows its 190px rect on both sides and runs into the railway line. Visible at 1440 and 768. Add textLength='182' lengthAdjust='spacingAndGlyphs', or widen the rect."]},
+      {"screen": "Live map route fly-to", "issues": ["A short route (Platform Shakedown, 0.27 km) flies to zoom 16+ up to maxZoom 18 while tiles are maxNativeZoom 16, so the basemap is blurry and over-scaled. Pass maxZoom: 16 to flyToBounds."]},
+      {"screen": "Field log form", "issues": ["FieldLogForm is keyed by pin.id, so dropping or moving a map pin while the form is half-filled remounts it and loses what was typed (code review, not run in the UI)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_map_api.py", "/app/backend/tests/test_forge_api.py", "/app/backend/tests/test_intel_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix the IllustratedMap sigil click/tap toggle so a click or tap always shows the label (e.g. onClick={() => setActive(h.id)} and close on outside click, or ignore the click when the active state was just set by hover/focus)",
+    "Add min-w-0 to the HotspotKey/Legend Reveal column in MapSection (first grid), so content is not clipped at 375px",
+    "Clear MapSection pendingPin after the pinned sighting is created",
+    "Fit the 58-letter station sign text inside its rect",
+    "Cap flyToBounds at maxZoom 16"
+  ],
+  "critical_code_review_comments": [
+    "IllustratedMap.jsx lines 70-74: the onMouseEnter/onFocus and onClick toggle fight each other, so a click or tap cancels itself",
+    "MapSection.jsx: pendingPin state is never reset; it needs to be tied to App's logPin lifecycle",
+    "test_forge_api.py created a TEST_Logger sighting with no cleanup (no DELETE endpoint). Fixed: it now deletes its own sighting by id via Mongo",
+    "Backend: the _resolve_pin, SightingCreate lat/lng validators and RoutesResponse model are clean, and /api/routes is static seed data that matches the hotspot ids"
+  ],
+  "updated_files": ["/app/backend/tests/test_map_api.py (new)", "/app/backend/tests/test_forge_api.py (sighting cleanup)"],
+  "success_rate": {"backend": "100% (35/35)", "frontend": "about 85% (all core flows pass; 1 high and 1 medium UI bug)"},
+  "seed_data_creation": "None. All TEST_ sightings created by pytest or the UI were deleted by id (log-0258afab, log-be4588e8 and the pytest ids). The DB holds 5 sightings again: log-001..003 plus the 2 pre-existing tscheck logs.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run: cd /app/backend && REACT_APP_BACKEND_URL=<frontend/.env> pytest tests/ -p no:xdist. test_map_api cleans up its sightings via pymongo. In the UI, the interactive map only mounts once #map is near the viewport, so click nav-link-map and then scroll_into_view_if_needed on [data-testid=interactive-map]; loading /#map does not scroll. To test mobile touch, create a new context with is_mobile=True, has_touch=True and an iPhone UA. The engage text then reads 'Tap to explore the map' and the .leaflet-touch-drag class toggles. Recheck the sigil tap label at 375, map-key-investigate-* clipping at 375, and that no untitled .leaflet-marker-icon remains after a pinned submit."
+}

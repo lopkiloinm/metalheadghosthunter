@@ -1,0 +1,14 @@
+{"passed":10,"failed":0,"bugs":[],"action_items":[],"retest_needed":false,
+"notes":["Inspector modal closes automatically after Add to Crate (check adapted; not a bug).","Hero check run via preview URL ingress with ?webgl=off; 0 console errors. Real WebGL 3D rendering not verifiable headless.","Eco default checked at 375px without webgl=off."],
+"checks":[
+{"criterion":"JRN-1 Hero + CTA","name":"hero-cta-scrolls-catalog","lane":"browser","status":"passed","evidence":"hero + Forge Your Crate CTA visible; click scrolls catalog-section into viewport; console_errors=[] (preview URL)"},
+{"criterion":"JRN-2/3 Catalog + inspector + add to crate","name":"catalog-inspector-add-to-crate","lane":"browser","status":"passed","evidence":"6 gear cards w/ prices; inspector specs visible; toast names item; navbar badge +1"},
+{"criterion":"JRN-4/5 Crate pricing + date validation","name":"crate-discount-and-date-validation","lane":"browser","status":"passed","evidence":"empty dates, end<start, past pickup all disable book with inline msg; 4 nights shows crate-discount-line"},
+{"criterion":"JRN-6/7 Book + My Bookings cancel","name":"booking-create-then-cancel","lane":"browser","status":"passed","evidence":"booking-success with reference; listed in My Bookings; cancel removes card; crate empty afterwards"},
+{"criterion":"JRN-8 Empty crate","name":"empty-crate-cta","lane":"browser","status":"passed","evidence":"crate-empty-state visible; CTA scrolls to catalog"},
+{"criterion":"JRN-9/10/11 Story sections + field logs","name":"story-sections-field-logs","lane":"browser","status":"passed","evidence":"bundles/hotspots/logs populated; incomplete shows report+location errors, count unchanged; complete tscheck log appears first"},
+{"criterion":"JRN-12/13 Responsive + toggles","name":"responsive-mobile-toggles","lane":"browser","status":"passed","evidence":"scrollWidth<=innerWidth at 1440/768/375; mobile menu has crate/bookings; synth aria-pressed false->true"},
+{"criterion":"JRN-12/13 Responsive + toggles","name":"eco-default-on-mobile","lane":"browser","status":"passed","evidence":"375px: mobile eco toggle aria-pressed=true by default, toggles off"},
+{"criterion":"JRN-14 API","name":"backend/e1_tests/test_tscheck_api.py","lane":"backend","status":"passed","evidence":"GET /api/openapi.json 200; GET /api/equipment 200 items=6; POST /api/bookings 2xx, GET ?email lists code, DELETE 2xx; past pickup 4xx; POST /api/sightings 2xx appears first; invalid sighting 4xx (4 passed)"},
+{"criterion":"JRN-4/5 Crate pricing + date validation","name":"backend/e1_tests/test_tscheck_api.py::test_booking_past_date_rejected","lane":"backend","status":"passed","evidence":"POST /api/bookings pickupDate in past -> 4xx"}
+]}

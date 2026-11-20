@@ -1,0 +1,40 @@
+{
+  "summary": "Phase 2 (Spectre Intel) plus the root priority fixes. Backend: 23/23 pytest pass (14 regression tests in test_forge_api.py, including test_past_pickup_date, which was the one failure last iteration, plus 9 new intel tests in test_intel_api.py). POST /api/intel/search returned 6 results for 'Beaumaris Gaol' (hauntedrooms, spookyisles and others), each with title, url, snippet and source. It recommended 3 valid slugs. cached was false on the first call and true on the identical repeat. 'a', '', '   ', {} and a 121-char query all return 422. A nonsense query returns results [] and recommended [] with 200. The key never appears in responses, and openapi.json lists the route. Frontend: all Intel flows pass. Nav link scroll, inline validation (no API call), live chip search with loading state then 6 cards, the link opens a new tab, and recommended Add to Crate shows the toast and moves the badge from 0 to 1. Raid Planner 'Investigate' scrolls to Intel and sends the hotspot name. With mocks, the 502 state shows the exact error copy and Retry sends the same query again, and the empty state shows the exact copy. Empty-state chips work, as do the cached badge and Enter submit. The hero stage does not overlap the text or CTAs at 1440, 1680, 1920 or 2560 (stage left edge is about 40px right of the text column; elementFromPoint at 4 points returns CANVAS). No horizontal scroll at 375, 768 or 1440. Camera presets in hero and inspector glide to the exact preset, then drag rotates the view and does not snap back, and wheel zoom changes distance, every time. All 6 models render as one assembled piece. Phase 1 regression passes: add to crate, date error, 3-night 15% discount (-£8.10, total £45.90), PWLL-666-ZDFU, cancel with the new confirm step and toast, and field log errors with the new log first. I found and fixed one mobile layout bug.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/intel/search", "issue": "Results can be off-topic. _relevant() keeps any result that contains any query token of 3+ chars, so 'St. Tysilio's Church (Church Island)' returned 'Most haunted churches in the United States' and 'Catholic sites in America' because they match 'church' or 'island'. Consider requiring the rarer tokens or most tokens, or adding 'Anglesey Wales' to the query for known hotspots."},
+      {"endpoint": "tests/test_forge_api.py::test_create_sighting", "issue": "Creates a TEST_Logger sighting and never removes it, because there is no DELETE /api/sightings. Each run leaves a row. 2 such rows from other runs remain (log-99255ee4, log-7c4039a1); I deleted only my own."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "IntelResults grid (mobile 375)", "issue": "FIXED by tester. The dossier cards and Recommended Arsenal were 361px wide inside a 335px container. They were clipped about 26px on the right, so the right border and the end of the text were cut off. Cause: the outer grid had no explicit columns and its children had min-width:auto, so the implicit track resolved to 360.8px. Fix: grid-cols-1 on both grids, plus min-w-0 on the grid children.", "selector": "[data-testid=intel-results]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Inspector overhead preset (Pentagrid)", "issues": ["From overhead the barrel hides the tripod entirely. This is acceptable, just noting it."]},
+      {"screen": "Inspector Macro preset", "issues": ["Macro crops the Doomspike bottom ring and the spirit box antenna tip. Minor."]},
+      {"screen": "Intel quick picks", "issues": ["Only 4 of the 5 hotspots show as chips (hotspots.slice(0,4)), so the 58-Letter Platform is missing. This may be intended."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_forge_api.py", "/app/backend/tests/test_intel_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Optional: tighten intel relevance filtering (backend/intel_service.py _relevant) so generic token matches like 'church' do not let in US results",
+    "Optional: add a cleanup path for test sightings, or make test_create_sighting clean up after itself",
+    "Keep the IntelResults grid-cols-1 / min-w-0 fix (tester edit)"
+  ],
+  "critical_code_review_comments": [
+    "intel_service: only IntelUnavailable maps to 502. Any unexpected exception in _normalize or recommend_gear (for example, the upstream schema changes so a field is a non-str or non-list type) would surface as a 500. Consider a broad except in the router that logs and returns the same 502.",
+    "intel_service _cache is unbounded (one entry per distinct query for 10 min) and has no eviction of expired keys. Add a max size or prune expired keys on write.",
+    "httpx.AsyncClient is created per request. This is fine at this scale; a module-level client would reuse connections.",
+    "The frontend sends the query untrimmed internally ('Beaumaris   Gaol'). The backend collapses whitespace, so this is harmless.",
+    "window.__spectreCams holds 2 cameras (hero + inspector), not the 3 the brief mentions; card viewports do not use CameraRig. The last entry is still the inspector, as documented."
+  ],
+  "updated_files": ["/app/backend/tests/test_intel_api.py", "/app/frontend/src/components/intel/IntelResults.jsx"],
+  "success_rate": {"backend": "100% (23/23)", "frontend": "100% of the requested flows after the mobile grid fix (1 bug found and fixed)"},
+  "seed_data_creation": "None kept. Booking PWLL-666-ZDFU was cancelled through the UI (DELETE 200). My sightings log-8669e304 (UI) and log-67350028 (pytest) were deleted from Mongo by id. About 5 live You.com calls were made (Beaumaris x2, cached on the second; Church Island; nonsense query). Error, empty and layout states used route mocks.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run: cd /app/backend && REACT_APP_BACKEND_URL=<frontend/.env> pytest tests/ -p no:xdist. test_intel_api makes live You.com calls; the second Beaumaris call is cached. The Vite HMR websocket drops about every 20-30s in preview and blanks or reloads the page; split long Playwright scripts and retry. My Bookings cancel now has a confirm step: booking-cancel-{code} then booking-cancel-confirm-{code}. POST /api/bookings returns {booking:{...}}. A fresh browser session has no local booking list, so search by code first."
+}

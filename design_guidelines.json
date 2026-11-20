@@ -1,0 +1,252 @@
+{
+  "theme": "dark_only",
+  "project_name": "Llanfair Spectre Forge",
+  "brand_archetype": "Doom Metal Forge x Tactical Spectral Arsenal (Wales Gothic / Industrial Black Metal)",
+  "emotional_tone": "Ominous, heavyweight, precision-forged, electrifying, atmospheric, accessible",
+  "app_type": "hybrid_fullstack marketing + rental app (React 18 + Vite + Tailwind 3 + Three.js / R3F / Postprocessing)",
+  "instructions_to_main_agent": [
+    "Follow this document strictly to transform Llanfair Spectre Forge into a top-1% hackathon-winning experience.",
+    "Refine the theme to Ember Orange (#ff4a1c) & Spectral Cyan/Mint (#00f5a0 & #22ff88) paired with deep Obsidian/Iron and aged Brass.",
+    "Typography: Reserve Blackletter / Gothic ('UnifrakturMaguntia' or 'Cinzel Decorative') strictly for heroic brand titles and key section accents. For primary UI headings and subheadings, use bold chiseled serif 'Cinzel' or 'Space Grotesk' with tight tracking. For body text, use highly readable 'Space Grotesk' or 'Inter' with loose leading so legibility is paramount and WCAG AA contrast is satisfied.",
+    "Strictly avoid emoji icons anywhere in the UI (no 🤖, 🧠, 💡, 🔮, 🎯, etc.). Use only Lucide icons (Flame, Skull, Zap, Radio, MapPin, Package, ShieldCheck, Disc3, Eye, Plus, RotateCw, Volume2, VolumeX, etc.).",
+    "All interactive elements (buttons, inputs, toggles, cards, drawer items, modals, manifests, links) MUST have explicit kebab-case `data-testid` attributes (e.g. data-testid='hero-rent-rig-button', data-testid='crate-drawer-checkout-button').",
+    "Ensure dark-only aesthetic with WCAG AA compliance (4.5:1 for body text, 3:1 for large headers and buttons). Never use transparent backgrounds on headers, drawers, or modals that allow content bleed.",
+    "Support Adaptive Eco 3D Mode: auto-detect mobile viewports (<768px) or low-power indicators, while providing an accessible manual toggle in the navigation bar.",
+    "Ensure the Sunn O))) 55Hz drone synth is MUTED by default with a visible, accessible toggle in the header.",
+    "Rental flow must be seamless: 6 catalog cards -> interactive 3D inspection modal -> Add to Crate toast + persistent crate badge -> Crate Drawer with multi-day discount calculation (15% off 3+ nights) -> Booking manifest generation -> Manifest lookup modal with cancellation support."
+  ],
+  "typography": {
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=UnifrakturMaguntia&display=swap",
+    "font_families": {
+      "blackletter": "\"UnifrakturMaguntia\", \"Cinzel Decorative\", Georgia, serif",
+      "display": "\"Cinzel\", Georgia, serif",
+      "sans": "\"Space Grotesk\", system-ui, -apple-system, sans-serif",
+      "mono": "\"JetBrains Mono\", ui-monospace, SFMono-Regular, monospace"
+    },
+    "type_scale": {
+      "hero_h1": "text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tight leading-none uppercase",
+      "section_h2": "text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold tracking-tight uppercase",
+      "card_h3": "text-lg sm:text-xl font-display font-bold tracking-normal text-bone",
+      "badge_overline": "font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em]",
+      "body_base": "font-sans text-sm sm:text-base leading-relaxed text-bone/80",
+      "body_dense": "font-sans text-xs sm:text-sm leading-normal text-bone/70",
+      "telemetry_mono": "font-mono text-xs sm:text-[13px] tracking-wide"
+    }
+  },
+  "colors": {
+    "base": {
+      "obsidian": "#060608",
+      "abyss": "#08090d",
+      "iron": "#0e1017",
+      "steel": "#161922",
+      "slate_border": "rgba(255, 255, 255, 0.12)"
+    },
+    "brand_refined": {
+      "ember": "#ff4a1c",
+      "ember_glow": "#ff2a4b",
+      "ember_dark": "#991128",
+      "spectral_cyan": "#00f5a0",
+      "spectral_ecto": "#22ff88",
+      "spectral_dim": "#0a402d",
+      "brass": "#d4a24c",
+      "brass_bright": "#f5c062",
+      "bone": "#eae5dc",
+      "bone_muted": "#a8a29e"
+    },
+    "surface_borders": {
+      "forge_card_border": "1px solid rgba(255, 255, 255, 0.08)",
+      "forge_card_hover_border": "rgba(255, 74, 28, 0.45)",
+      "glow_ember": "0 0 32px rgba(255, 74, 28, 0.35)",
+      "glow_spectral": "0 0 28px rgba(0, 245, 160, 0.28)",
+      "glow_brass": "0 0 22px rgba(212, 162, 76, 0.25)"
+    }
+  },
+  "visual_enhancers": {
+    "textures": {
+      "scanlines": "repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px)",
+      "radial_glow_hero": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 74, 28, 0.18), transparent 70%)",
+      "radial_glow_secondary": "radial-gradient(ellipse 60% 40% at 90% 30%, rgba(0, 245, 160, 0.08), transparent 60%)"
+    },
+    "welsh_station_signboard": "Iconic 58-letter Welsh village name sign (Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch) styled as a forged iron & brass railway marker with rivets, inset brass borders and amber beacon lights."
+  },
+  "three_d_strategy": {
+    "libraries": ["@react-three/fiber", "@react-three/drei", "@react-three/postprocessing", "three", "postprocessing"],
+    "hero_stage": {
+      "model_keys": ["emf", "spiritbox", "thermal", "rempod", "laser", "evp"],
+      "lighting": "Studio forge lighting: dual directional rim lights (#fff7ec and #93c5fd), hemisphere light, dynamic accent point-light (boosted in overdrive to 5.2 intensity), floor rift ground glow.",
+      "effects": {
+        "bloom": "Bloom luminanceThreshold 0.45, mipmapBlur, intensity 0.95 (normal) / 1.55 (overdrive). Disabled automatically when lowPower (Eco Mode) is active.",
+        "vignette": "Vignette offset 0.2, darkness 0.9 for dark cinematic stage focus."
+      },
+      "rift_floor": "Procedural GLSL undulation rift shader with time-based distortion and dynamic overdrive pulse.",
+      "instanced_embers": "THREE.InstancedMesh rendering 75 ember sparks (28 in Eco Mode) rising and swaying."
+    },
+    "catalog_cards": {
+      "viewport": "EquipmentCardViewport component using IntersectionObserver to only render active WebGL viewports when scrolled near view, preventing GPU strain.",
+      "controls": "OrbitControls with zoom/pan disabled and gentle damping."
+    },
+    "eco_mode": {
+      "auto_detection": "Initial detection on mount: window.innerWidth < 768 or navigator.hardwareConcurrency <= 4 sets lowPower true.",
+      "manual_toggle": "Navbar 'ECO 3D' vs 'ULTRA 3D' button with state preservation and toast confirmation."
+    },
+    "fallback": "WebGLErrorBoundary wraps 3D canvas with themed fallback: iron-plated dossier card with equipment wireframe visual and full specs."
+  },
+  "sound_synth_strategy": {
+    "default_state": "MUTED (droneActive: false).",
+    "toggle_control": "Navbar toggle with sound waves / mute icon, status badge '55Hz A1 ON' / 'DOOM AMP'.",
+    "audio_engine": "spectralSynth.js (Web Audio API synthesising 55Hz Sunn O))) sub-bass drone with distortion and overdrive harmonic pulse on test fire)."
+  },
+  "sections_and_components": {
+    "navbar": {
+      "path": "src/components/Navbar.jsx",
+      "elements": [
+        "Skull logo badge with crimson/ember border (data-testid='navbar-brand')",
+        "Llanfair Spectre Forge title + Anglesey Wales subtitle + API status indicator dot (data-testid='backend-status-indicator')",
+        "Desktop navigation links (3D Armoury, Coven Loadouts, Anglesey Raids, Field Logs)",
+        "Doom Amp 55Hz Synth Toggle (data-testid='synth-toggle-button')",
+        "Eco / Ultra 3D Mode Toggle (data-testid='eco-mode-toggle-button')",
+        "Manifests Lookup Button (data-testid='manifests-lookup-button')",
+        "Iron Crate Drawer Toggle with item count badge (data-testid='crate-drawer-toggle-button')",
+        "Mobile hamburger menu drawer allowing full navigation and crate access on 375px screens (data-testid='mobile-menu-toggle')"
+      ],
+      "ticker": "Llanfairpwllgwyngyll 58-letter marquee banner with flame anchors."
+    },
+    "hero_stage_section": {
+      "path": "src/App.jsx",
+      "elements": [
+        "Wales location pill (data-testid='hero-location-badge')",
+        "Main H1: 'HUNT THE ABYSS AT FULL VOLUME' with gradient text span",
+        "Narrative description highlighting Anglesey hotspots (Church Island, Bryn Celli Ddu)",
+        "Active 3D Rig mini-spec dossier with daily rate, metal tagline, 'Rent This Rig' (data-testid='hero-rent-rig-button') and 'Test Fire' Overdrive button (data-testid='hero-test-fire-button')",
+        "Full 3D Stage container with camera angle pills: '3/4 Rig', 'Macro Zoom', 'Top View' (data-testid='camera-preset-*')",
+        "6-instrument quick switcher pills beneath stage with real-time selection and daily rate tags (data-testid='hero-gear-pill-*')"
+      ]
+    },
+    "catalog_section": {
+      "path": "src/components/EquipmentCard.jsx",
+      "elements": [
+        "Category filter tabs: All, EMF & Fields, EVP & Audio, Optics & Thermal, Perimeter Traps (data-testid='category-filter-*')",
+        "6 Equipment Cards in responsive grid (col-1 md:col-2 lg:col-3):",
+        "Card top: Embedded 3D model viewport (draggable 360°)",
+        "Card body: Category pill, stock level, item title, model subtitle, metalhead tagline, spec matrix, soundtrack pairing, daily rate, threat skull rating",
+        "Action buttons: '3D Rig' inspect button (data-testid='card-inspect-button-*') and 'Rent' / 'Crate (+1)' button (data-testid='card-add-crate-button-*')"
+      ]
+    },
+    "inspector_modal": {
+      "path": "src/components/EquipmentInspectorModal.jsx",
+      "elements": [
+        "Side-by-side modal: Left 3D viewport with camera presets and test-fire overdrive, Right forged spec sheet",
+        "Full technical specs table, metalhead pairing, refundable deposit info",
+        "Primary action: 'Add to Iron Rental Crate' (data-testid='inspector-add-to-crate-button')",
+        "Close button with Esc key handling (data-testid='inspector-close-button')"
+      ]
+    },
+    "crate_drawer": {
+      "path": "src/components/RentalCrateDrawer.jsx",
+      "elements": [
+        "Slide-over right drawer with backdrop scrim (data-testid='rental-crate-drawer')",
+        "Empty state with CTA to browse 3D Armoury (data-testid='crate-empty-cta')",
+        "Item list with increment (+), decrement (-), remove trash button (data-testid='crate-item-*')",
+        "Pickup Date picker with tomorrow validation (data-testid='crate-pickup-date-input')",
+        "Nights selector with '15% OFF (3+ Nights)' badge calculation (data-testid='crate-nights-select')",
+        "Llanfairpwllgwyngyll drop point selector (Bunker, Menai Suspension Bridge layby, etc.) (data-testid='crate-pickup-location-select')",
+        "Target Haunting Site dropdown (auto-fills field map)",
+        "Ritual Add-Ons checkboxes (9V Black-Cell Pack, Corpse-Paint Pelicase, Faraday Pouch, Halen Môn Celtic Sea-Salt) (data-testid='addon-toggle-*')",
+        "Hunter alias & email input with validation (data-testid='hunter-name-input', data-testid='hunter-email-input')",
+        "Live financial ledger: Subtotal, Riff Lord Multi-Night Discount (-15%), Addons Total, Grand Total Due, Refundable Deposit",
+        "Confirm Rental button with loading spinner (data-testid='crate-submit-booking-button')",
+        "Booking Confirmation state showing generated booking code (e.g. PWLL-666-ABCD), pickup bunker, total GBP, and 'Return to 3D Armoury' button"
+      ]
+    },
+    "bookings_modal": {
+      "path": "src/components/BookingsModal.jsx",
+      "elements": [
+        "Search input by Manifest Code or Email (data-testid='manifest-search-input')",
+        "Search / Lookup button (data-testid='manifest-search-submit')",
+        "Manifest card list showing code, status, hunter alias, dates, gear item badges, total amount",
+        "Cancel Manifest button with confirmation toast (data-testid='manifest-cancel-button-*')"
+      ]
+    },
+    "bundles_section": {
+      "path": "src/components/BundlesSection.jsx",
+      "elements": [
+        "3 Pre-forged Coven Loadouts: 'Black Metal Solo Vigil' (Save 14%), 'Full Doom Coven Rig' (Most Popular - Save 17%), 'Menai Strait Blood Moon Arsenal' (Save 19%)",
+        "Instrument list with checkmarks",
+        "One-click 'Load X Rigs Into Crate' button that batches items into crate and opens drawer (data-testid='bundle-load-button-*')"
+      ]
+    },
+    "hotspots_section": {
+      "path": "src/components/HauntedHotspots.jsx",
+      "elements": [
+        "Famous 58-letter Llanfairpwll station signboard header",
+        "5 Anglesey Haunting Locations: St. Tysilio's Church (Church Island), Marquess of Anglesey's Column, Bryn Celli Ddu Passage Tomb, Plas Newydd Foreshore, Llanfairpwll Station Platform",
+        "Interactive selector buttons with skull threat levels (data-testid='hotspot-select-*')",
+        "Hotspot Dossier: GPS coordinates, baseline EMF, peak activity hour, anomaly class, historic folklore, recommended raid soundtrack",
+        "Recommended instruments pill list",
+        "'Arm Crate for [Hotspot]' action button that auto-loads recommended gear into crate (data-testid='hotspot-arm-crate-button')"
+      ]
+    },
+    "field_logs_section": {
+      "path": "src/components/FieldLogs.jsx",
+      "elements": [
+        "Feed of community ghost hunting reports from Anglesey raids with peak EMF badge, gear used, hunter alias and band name",
+        "'Log a Sighting' toggle button (data-testid='toggle-field-log-form-button')",
+        "Report submission form with hunter alias, band/coven, peak EMF, location dropdown, gear used dropdown, soundtrack, and encounter report textarea",
+        "Publish button with immediate local state update and toast (data-testid='submit-field-log-button')"
+      ]
+    }
+  },
+  "image_urls": {
+    "wales_mood_bg": {
+      "url": "https://images.pexels.com/photos/14515784/pexels-photo-14515784.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Foggy historic fortress ruins in Wales, perfect as subtle dark textured backdrop for Anglesey Haunted Raid Planner."
+    },
+    "forge_sparks_hero": {
+      "url": "https://images.unsplash.com/photo-1557951959-e3e30ee937e5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwxfHxtZXRhbCUyMGZvcmdlJTIwc3BhcmtzfGVufDB8fHx8MTc5NTIwNjMzMnww&ixlib=rb-4.1.0&q=85",
+      "description": "Glowing ember sparks rising against deep black void, used for hero atmospheric texture behind 3D armory."
+    },
+    "industrial_welder_sparks": {
+      "url": "https://images.pexels.com/photos/38846050/pexels-photo-38846050.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Close-up glowing forged metal with bright flying sparks, used as thumbnail accent in Field Logs."
+    }
+  },
+  "accessibility_and_motion": {
+    "prefers_reduced_motion": "When active, auto-rotation in 3D is disabled, ember particle speed is frozen, and CSS smooth scroll is disabled.",
+    "wcag_aa_compliance": "Normal body text contrast >= 4.5:1 against #060608. Interactive buttons use solid fills or high-contrast borders with explicit hover text colors.",
+    "focus_states": "All buttons, inputs, and links feature high-visibility outline: focus:ring-2 focus:ring-[#ff4a1c] focus:outline-none."
+  },
+  "testing_attributes": {
+    "rule": "Every interactive or data-critical element MUST have data-testid in kebab-case format.",
+    "examples": [
+      "navbar-brand",
+      "synth-toggle-button",
+      "eco-mode-toggle-button",
+      "manifests-lookup-button",
+      "crate-drawer-toggle-button",
+      "hero-rent-rig-button",
+      "hero-test-fire-button",
+      "card-inspect-button-doomspike-emf",
+      "card-add-crate-button-doomspike-emf",
+      "inspector-add-to-crate-button",
+      "crate-submit-booking-button",
+      "manifest-search-input",
+      "bundle-load-button-bundle-doom-coven",
+      "hotspot-arm-crate-button"
+    ]
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) with opaque tinted backgrounds.",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories = main agent will use placeholder text which is FORBIDDEN."
+  ]
+}

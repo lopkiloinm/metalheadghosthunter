@@ -1,0 +1,43 @@
+{
+  "summary": "First full run of Phase 1 Llanfair Spectre Forge. Backend: 13/14 pytest passing (storage=mongodb). The only failure: the backend accepts a pickupDate in the past. Frontend: every journey JRN-1..JRN-14 passed through Playwright at 1920/1440/768/375. Covered: preloader, hero canvas and CTA scroll, 6 cards and 5 filters, inspector (presets, test fire, add, Esc), toast and badge counts, crate date validation, discount line and hint, contact errors, booking success PWLL-666-XXXX, My Bookings (list, search by code and email, cancel with toast, empty state), empty-crate CTA, bundles, hotspot arm (sets the target select), field-log inline errors and new log first with NEW badge, no horizontal scroll, mobile menu, synth and eco toggles, eco on at 375, ?webgl=off fallbacks, prefers-reduced-motion. No console errors apart from GL driver performance warnings.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/bookings", "issue": "pickupDate in the past (e.g. 2020-01-01) is accepted with 201. Only the frontend enforces 'pickup today or future'. Add a check in the BookingCreate model_validator: pickupDate >= date.today(), else 422."},
+      {"endpoint": "GET /api/bookings", "issue": "Called with no code, codes or email filter, it returns up to 50 bookings from all customers, including names and emails. With no auth, anyone can list them. Return an empty list or 400 when no filter is given. Cancelling by code also has no ownership check; accepted because there is no auth, but note it."},
+      {"endpoint": "POST /api/bookings", "issue": "generate_booking_code uses 4 random chars (36^4 ≈ 1.7M) with no uniqueness check and no unique index. A collision would make lookup and DELETE ambiguous. Retry on collision or add a unique index on bookingCode."},
+      {"endpoint": "/api/sightings", "issue": "There is no DELETE endpoint. The tester had to remove its TEST_ logs directly in Mongo by id."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "WebGL fallback (?webgl=off)", "issues": ["The hero fallback caption 'Static forge plate · 3D unavailable' sits under the hero info card; only 'LABLE' shows.", "In the inspector fallback, that caption overlaps the 'Drag to orbit · scroll to zoom' hint and the surge-test button. The orbit hint and camera presets still show even though 3D is unavailable."]},
+      {"screen": "Crate drawer", "issues": ["When an invalid name or email blocks submit, crate-name-error and crate-email-error render below the visible scroll area. Nothing near the Confirm button shows why the booking did nothing. Scroll to or focus the first invalid field."]},
+      {"screen": "Mobile (375) toasts", "issues": ["The top toast covers the crate drawer header and the first line item for about 3s after adding an item."]},
+      {"screen": "My Bookings", "issues": ["Cancel deletes at once with no confirmation step (a destructive action)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_forge_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Backend: reject a past pickupDate with 422 (BookingCreate validator)",
+    "Backend: do not return all bookings from GET /api/bookings when no filter is given",
+    "Backend: make bookingCode unique (retry on collision or add a unique index)",
+    "Frontend: fix the fallback caption overlap in GearFallback (hero and inspector); hide the orbit hint when WebGL is off",
+    "Frontend: scroll to or focus the first invalid contact field in the crate on submit",
+    "Optional: confirmation step before cancelling a booking; keep the mobile toast from covering the drawer header"
+  ],
+  "critical_code_review_comments": [
+    "models.BookingCreate only checks return > pickup and nights ≤ 14; there is no lower bound on pickupDate.",
+    "routers/bookings.list_bookings: an empty query {} matches every booking, a data exposure.",
+    "api.js cancelRentalBooking swallows 4xx and always forgets the code locally. This is fine for 404, but a 422/400 would also hide a failed cancel.",
+    "The frontend falls back to localStorage on any non-4xx error, so a backend 5xx makes a fake 'offline' booking with a client-made code that the server does not know about. Consider showing an error instead for 5xx."
+  ],
+  "updated_files": ["/app/backend/tests/test_forge_api.py"],
+  "success_rate": {"backend": "93% (13/14)", "frontend": "100% of JRN-1..JRN-14 checks"},
+  "seed_data_creation": "None. Test bookings were deleted via DELETE /api/bookings/{code}. Test field logs (log-25016182, log-89b68eab) were deleted from Mongo by id. Sightings collection is back to the 3 seed logs and there are 0 bookings.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run: REACT_APP_BACKEND_URL=... pytest /app/backend/tests/test_forge_api.py -p no:xdist. test_past_pickup_date fails until the backend validates pickupDate. The test file deletes the bookings it creates, but POST /api/sightings has no delete endpoint, so remove TEST_ logs from Mongo by id. The container clock is Nov 2026, so use 2027 dates. The 768px screenshot was once blank white right after a viewport resize; a fresh page load rendered fine, so it was a screenshot artifact."
+}

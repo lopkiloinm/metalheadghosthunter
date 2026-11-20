@@ -1,0 +1,30 @@
+# Phase 1 Journeys
+
+- **JRN-1**: Open the home page and wait for the preloader to finish.
+  - Expected: the redesigned hero shows a 3D stage, headline and "Forge Your Crate" CTA, with no console errors. Clicking the CTA scrolls to the catalog.
+- **JRN-2**: Scroll to the catalog.
+  - Expected: 6 gear cards, each with a name, a price per night and a 3D preview (or a static fallback).
+- **JRN-3**: Open a gear item and click "Add to Crate".
+  - Expected: the inspector opens with a rotatable model and specs. A toast names the item, and the navbar crate badge goes up by 1.
+- **JRN-4**: Open the crate with items and set dates 3+ nights apart.
+  - Expected: the total shows a 15% discount line.
+- **JRN-5**: In the crate, leave dates empty or set the end before the start.
+  - Expected: the book button is disabled and an inline message is shown.
+- **JRN-6**: Fill in a valid name and dates, then confirm the booking.
+  - Expected: a success state with a booking reference appears, and the crate clears.
+- **JRN-7**: Open My Bookings and cancel a booking.
+  - Expected: the booking is listed, then removed after cancelling.
+- **JRN-8**: Open the crate with nothing in it.
+  - Expected: a themed empty state with a CTA back to the catalog.
+- **JRN-9**: Scroll through Bundles, Raid Planner and Field Logs.
+  - Expected: each section is restyled and populated with seed data.
+- **JRN-10**: Submit a complete field log.
+  - Expected: it appears at the top of the list.
+- **JRN-11**: Submit an incomplete field log.
+  - Expected: inline validation appears and nothing is added.
+- **JRN-12**: View the whole page at 375px, 768px and 1440px.
+  - Expected: no horizontal scroll and no overlapping elements. The navbar is usable on mobile (menu plus crate access).
+- **JRN-13**: Toggle the synth and Eco mode.
+  - Expected: the synth starts muted and toggles. Eco mode reduces 3D effects, and is on by default at 375px. (interpreted)
+- **JRN-14**: Fetch `/api/openapi.json` and `/api/equipment`.
+  - Expected: both return 200, and equipment has 6 items.

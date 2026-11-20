@@ -5,40 +5,55 @@ import {
   FALLBACK_HOTSPOTS,
   FALLBACK_SIGHTINGS,
 } from '../data/equipmentCatalog';
+import { computeTotals } from '../lib/pricing';
 
-// Emergent.sh provides REACT_APP_BACKEND_URL in frontend/.env.
-// Locally, if left empty, Vite proxies `/api` directly to http://127.0.0.1:8001.
-const BACKEND_BASE = (
-  import.meta.env.REACT_APP_BACKEND_URL ||
-  import.meta.env.VITE_BACKEND_URL ||
-  ''
-).replace(/\/$/, '');
-
-const API = `${BACKEND_BASE}/api`;
+// Empty REACT_APP_BACKEND_URL means same-origin `/api` (Vite dev proxy).
+const API = `${(import.meta.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '')}/api`;
 const LOCAL_BOOKINGS_KEY = 'llanfair_spectre_bookings_v1';
 const LOCAL_SIGHTINGS_KEY = 'llanfair_spectre_sightings_v1';
+const MY_CODES_KEY = 'llanfair_spectre_my_codes_v1';
+
+const readLocal = (key) => JSON.parse(localStorage.getItem(key) || '[]');
+const writeLocal = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// Only network failures and gateway errors mean "backend unreachable"; other HTTP errors are real answers.
+const isOffline = (err) => !(err instanceof ApiError) || [502, 503, 504].includes(err.status);
+
+function errorDetail(body, status) {
+  if (Array.isArray(body.detail)) return body.detail[0]?.msg?.replace(/^Value error, /, '') || 'Invalid request';
+  return body.detail || `API error ${status}`;
+}
 
 async function apiRequest(path, options = {}) {
+  const { timeoutMs = 6000, ...fetchOptions } = options;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(`${API}${path}`, {
-      ...options,
+      ...fetchOptions,
       signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
+      headers: { 'Content-Type': 'application/json', ...(fetchOptions.headers || {}) },
     });
     if (!res.ok) {
-      const detail = await res.json().catch(() => ({}));
-      throw new Error(detail.detail || `API error ${res.status}`);
+      const body = await res.json().catch(() => ({}));
+      throw new ApiError(errorDetail(body, res.status), res.status);
     }
     return await res.json();
   } finally {
     clearTimeout(timeout);
   }
 }
+
+export const getMyBookingCodes = () => readLocal(MY_CODES_KEY);
+const rememberBookingCode = (code) => writeLocal(MY_CODES_KEY, [code, ...getMyBookingCodes().filter((c) => c !== code)]);
+const forgetBookingCode = (code) => writeLocal(MY_CODES_KEY, getMyBookingCodes().filter((c) => c !== code));
 
 export async function fetchInitialForgeData() {
   try {
@@ -51,15 +66,14 @@ export async function fetchInitialForgeData() {
     ]);
     return {
       online: true,
-      storageMode: health.storage || 'mongodb',
-      equipment: eq.items || FALLBACK_EQUIPMENT,
-      addons: eq.addons || FALLBACK_ADDONS,
-      bundles: bundles.bundles || FALLBACK_BUNDLES,
-      hotspots: hotspots.hotspots || FALLBACK_HOTSPOTS,
-      sightings: sightings.sightings || FALLBACK_SIGHTINGS,
+      storageMode: health.storage,
+      equipment: eq.items,
+      addons: eq.addons,
+      bundles: bundles.bundles,
+      hotspots: hotspots.hotspots,
+      sightings: sightings.sightings,
     };
   } catch {
-    const savedSightings = JSON.parse(localStorage.getItem(LOCAL_SIGHTINGS_KEY) || '[]');
     return {
       online: false,
       storageMode: 'browser-offline',
@@ -67,109 +81,112 @@ export async function fetchInitialForgeData() {
       addons: FALLBACK_ADDONS,
       bundles: FALLBACK_BUNDLES,
       hotspots: FALLBACK_HOTSPOTS,
-      sightings: [...savedSightings, ...FALLBACK_SIGHTINGS],
+      sightings: [...readLocal(LOCAL_SIGHTINGS_KEY), ...FALLBACK_SIGHTINGS],
     };
   }
+}
+
+function buildOfflineBooking(payload) {
+  const eqMap = Object.fromEntries(FALLBACK_EQUIPMENT.map((e) => [e.slug, e]));
+  const lines = payload.items.map((entry) => ({ ...eqMap[entry.slug], quantity: entry.quantity }));
+  const totals = computeTotals(lines, payload.nights, payload.addonIds, FALLBACK_ADDONS);
+  return {
+    id: `local-${Date.now()}`,
+    bookingCode: `PWLL-666-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+    status: 'CONFIRMED',
+    ...payload,
+    items: lines.map((l) => ({
+      slug: l.slug,
+      name: l.name,
+      quantity: l.quantity,
+      dailyRate: l.dailyRate,
+      lineTotal: l.dailyRate * l.quantity * payload.nights,
+    })),
+    addons: payload.addonIds.filter((id) => FALLBACK_ADDONS[id]).map((id) => ({ id, ...FALLBACK_ADDONS[id] })),
+    subtotal: totals.subtotal,
+    riffLordDiscount: totals.discount,
+    addonsTotal: totals.addonsTotal,
+    totalGbp: totals.total,
+    refundableDepositGbp: totals.deposit,
+    createdAt: new Date().toISOString(),
+  };
 }
 
 export async function createRentalBooking(payload) {
+  let booking;
   try {
-    const data = await apiRequest('/bookings', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    return { booking: data.booking, persistedOnline: true };
-  } catch {
-    // Offline fallback calculation so the booking flow remains usable even without a running server
-    const eqMap = Object.fromEntries(FALLBACK_EQUIPMENT.map((e) => [e.slug, e]));
-    let subtotal = 0;
-    let deposit = 0;
-    const resolvedItems = payload.items.map((entry) => {
-      const eq = eqMap[entry.slug];
-      const lineTotal = (eq?.dailyRate || 20) * entry.quantity * payload.nights;
-      subtotal += lineTotal;
-      deposit += (eq?.deposit || 50) * entry.quantity;
-      return {
-        slug: entry.slug,
-        name: eq?.name || entry.slug,
-        quantity: entry.quantity,
-        dailyRate: eq?.dailyRate || 20,
-        lineTotal,
-      };
-    });
-    const discount = payload.nights >= 3 ? Number((subtotal * 0.15).toFixed(2)) : 0;
-    const addons = (payload.addonIds || [])
-      .map((id) => (FALLBACK_ADDONS[id] ? { id, ...FALLBACK_ADDONS[id] } : null))
-      .filter(Boolean);
-    const addonsTotal = addons.reduce((acc, a) => acc + a.price, 0);
-    const code = `PWLL-666-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const booking = {
-      id: `local-${Date.now()}`,
-      bookingCode: code,
-      status: 'CONFIRMED',
-      ...payload,
-      items: resolvedItems,
-      addons,
-      subtotal,
-      riffLordDiscount: discount,
-      addonsTotal,
-      totalGbp: Number((subtotal - discount + addonsTotal).toFixed(2)),
-      refundableDepositGbp: deposit,
-      createdAt: new Date().toISOString(),
-    };
-    const existing = JSON.parse(localStorage.getItem(LOCAL_BOOKINGS_KEY) || '[]');
-    localStorage.setItem(LOCAL_BOOKINGS_KEY, JSON.stringify([booking, ...existing]));
-    return { booking, persistedOnline: false };
+    booking = (await apiRequest('/bookings', { method: 'POST', body: JSON.stringify(payload) })).booking;
+  } catch (err) {
+    if (!isOffline(err)) throw err;
+    booking = buildOfflineBooking(payload);
+    writeLocal(LOCAL_BOOKINGS_KEY, [booking, ...readLocal(LOCAL_BOOKINGS_KEY)]);
   }
+  rememberBookingCode(booking.bookingCode);
+  return booking;
 }
 
-export async function fetchBookings({ code = '', email = '' } = {}) {
+export async function fetchBookings({ codes = [], code = '', email = '' } = {}) {
   const params = new URLSearchParams();
-  if (code) params.set('code', code);
-  if (email) params.set('email', email);
-  const query = params.toString() ? `?${params.toString()}` : '';
+  if (codes.length) params.set('codes', codes.join(','));
+  if (code) params.set('code', code.trim());
+  if (email) params.set('email', email.trim());
   try {
-    const data = await apiRequest(`/bookings${query}`);
-    return data.bookings || [];
+    return (await apiRequest(`/bookings?${params.toString()}`)).bookings;
   } catch {
-    const saved = JSON.parse(localStorage.getItem(LOCAL_BOOKINGS_KEY) || '[]');
-    return saved.filter((b) => {
-      if (code && b.bookingCode.toUpperCase() !== code.trim().toUpperCase()) return false;
-      if (email && b.email.toLowerCase() !== email.trim().toLowerCase()) return false;
-      return true;
-    });
+    const wanted = [...codes, code].filter(Boolean).map((c) => c.trim().toUpperCase());
+    return readLocal(LOCAL_BOOKINGS_KEY).filter(
+      (b) =>
+        (!wanted.length || wanted.includes(b.bookingCode)) &&
+        (!email || b.email.toLowerCase() === email.trim().toLowerCase())
+    );
   }
 }
 
 export async function cancelRentalBooking(bookingCode) {
   try {
     await apiRequest(`/bookings/${encodeURIComponent(bookingCode)}`, { method: 'DELETE' });
-    return true;
-  } catch {
-    const saved = JSON.parse(localStorage.getItem(LOCAL_BOOKINGS_KEY) || '[]');
-    localStorage.setItem(
-      LOCAL_BOOKINGS_KEY,
-      JSON.stringify(saved.filter((b) => b.bookingCode !== bookingCode))
-    );
-    return true;
+  } catch (err) {
+    if (isOffline(err)) {
+      writeLocal(LOCAL_BOOKINGS_KEY, readLocal(LOCAL_BOOKINGS_KEY).filter((b) => b.bookingCode !== bookingCode));
+    } else if (err.status !== 404) {
+      throw err;
+    }
   }
+  forgetBookingCode(bookingCode);
 }
 
 export async function submitFieldSighting(payload) {
   try {
-    const data = await apiRequest('/sightings', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    return data.sighting;
-  } catch {
-    const sighting = {
-      id: `log-${Date.now()}`,
-      ...payload,
-      createdAt: new Date().toISOString(),
-    };
-    const saved = JSON.parse(localStorage.getItem(LOCAL_SIGHTINGS_KEY) || '[]');
-    localStorage.setItem(LOCAL_SIGHTINGS_KEY, JSON.stringify([sighting, ...saved]));
+    return (await apiRequest('/sightings', { method: 'POST', body: JSON.stringify(payload) })).sighting;
+  } catch (err) {
+    if (!isOffline(err)) throw err;
+    const spot = FALLBACK_HOTSPOTS.find((h) => h.id === payload.hotspotId);
+    const pin = payload.lat != null ? {} : spot ? { lat: spot.lat + (Math.random() - 0.5) * 0.0008, lng: spot.lng + (Math.random() - 0.5) * 0.0012 } : {};
+    const sighting = { id: `log-${Date.now()}`, ...payload, ...pin, createdAt: new Date().toISOString() };
+    writeLocal(LOCAL_SIGHTINGS_KEY, [sighting, ...readLocal(LOCAL_SIGHTINGS_KEY)]);
     return sighting;
   }
+}
+
+export const TILE_PROXY_URL = `${API}/map/tiles/{z}/{x}/{y}.png`;
+
+export async function fetchMapStatus() {
+  try {
+    return await apiRequest('/map/status', { timeoutMs: 12000 });
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchRoutes() {
+  try {
+    return await apiRequest('/routes');
+  } catch {
+    return (await import('../data/mapRoutes.json')).default;
+  }
+}
+
+// Live You.com lore via the backend; no offline fallback (the key lives server-side only).
+export async function searchIntel(query) {
+  return apiRequest('/intel/search', { method: 'POST', body: JSON.stringify({ query }), timeoutMs: 16000 });
 }
