@@ -9,7 +9,7 @@ export function MobileMenu({ onClose, crateCount, onOpenCrate, onOpenBookings, s
   };
 
   return (
-    <div data-testid="mobile-menu" className="animate-menu-in border-t border-white/[0.06] bg-pit xl:hidden">
+    <div data-testid="mobile-menu" className="animate-menu-in border-t border-white/[0.06] bg-pit lg:hidden">
       <nav aria-label="Mobile" className="shell grid gap-1 py-4">
         {NAV_LINKS.map((l) => (
           <a

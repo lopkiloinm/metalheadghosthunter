@@ -16,6 +16,7 @@ Doom-metal ghost-hunting gear-rental web app for Llanfairpwllgwyngyll (Anglesey)
 - 2026-11 CameraRig: glide once, cancel on OrbitControls 'start', sync target/position; verified mouse + touch.
 - 2026-11 Map of the Restless: illustrated SVG chart + live Leaflet map, real lat/lng, OSRM-precomputed routes (GET /api/routes), layer toggles, legend, sighting pins (hotspot or map tap), no scroll hijack.
 - 2026-11 CARTO tile proxy GET /api/map/tiles/{z}/{x}/{y}.png with key validation, LRU, Esri fallback; GET /api/map/status.
+- 2026-11 Simplified header: one-line wordmark, 5 primary links with active-chapter underline, Crate button plus a ⋯ utility popover (My Bookings, Field Logs, Synth, 3D quality, backend status). 68px high, max-w 1360 centred, glass on scroll, hamburger below 1024px. Ticker removed.
 
 ## Testing
 iteration_1..4 reports; backend 45/45 pytest.
