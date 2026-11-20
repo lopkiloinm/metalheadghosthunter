@@ -37,6 +37,8 @@ export function EquipmentInspectorModal({ item, onClose, onAddToCrate, perf, sou
             eco={perf.eco}
             cameraPreset={camera}
             webglSupported={perf.webglSupported}
+            wraiths={perf.haunting ? 1 : 0}
+            wraithLayout="inspector"
           />
           {perf.webglSupported && (
             <div className="absolute left-4 top-4 z-10">

@@ -46,7 +46,7 @@ function PrimaryNav() {
   );
 }
 
-export function Navbar({ crateCount, onOpenCrate, onOpenBookings, synth, eco, backendOnline }) {
+export function Navbar({ crateCount, onOpenCrate, onOpenBookings, synth, eco, haunting, backendOnline }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const scrolled = useScrolled();
 
@@ -64,7 +64,7 @@ export function Navbar({ crateCount, onOpenCrate, onOpenBookings, synth, eco, ba
         <div className="flex shrink-0 items-center gap-2.5">
           <CrateButton count={crateCount} onClick={onOpenCrate} testId="navbar-crate-button" badgeTestId="navbar-crate-count" />
           <div className="hidden lg:block">
-            <NavMenu onOpenBookings={onOpenBookings} synth={synth} eco={eco} backendOnline={backendOnline} />
+            <NavMenu onOpenBookings={onOpenBookings} synth={synth} eco={eco} haunting={haunting} backendOnline={backendOnline} />
           </div>
           <button
             type="button"
@@ -79,7 +79,7 @@ export function Navbar({ crateCount, onOpenCrate, onOpenBookings, synth, eco, ba
         </div>
       </div>
       {menuOpen && (
-        <MobileMenu onClose={() => setMenuOpen(false)} crateCount={crateCount} onOpenCrate={onOpenCrate} onOpenBookings={onOpenBookings} synth={synth} eco={eco} />
+        <MobileMenu onClose={() => setMenuOpen(false)} crateCount={crateCount} onOpenCrate={onOpenCrate} onOpenBookings={onOpenBookings} synth={synth} eco={eco} haunting={haunting} />
       )}
     </header>
   );

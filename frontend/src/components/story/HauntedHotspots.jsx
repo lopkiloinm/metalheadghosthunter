@@ -20,7 +20,7 @@ export function HauntedHotspots({ hotspots, equipment, onArmHotspot, onInvestiga
       </div>
 
       <div className="shell relative">
-        <SectionHeader chapter="IV" overline="Haunted Raid Planner" title="Choose your haunt on Ynys Môn">
+        <SectionHeader chapter="IV" overline="Haunted Raid Planner" logo="Raid Planner" title="Choose your haunt on Ynys Môn">
           <p>Every rental includes a waterproof field map. Pick a site and arm your crate with the rigs it demands.</p>
         </SectionHeader>
 

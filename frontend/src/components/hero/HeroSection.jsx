@@ -36,15 +36,15 @@ export function HeroSection({ equipment, onAddToCrate, onForgeCta, perf, paused,
       </div>
 
       <div className="shell relative grid items-center gap-12 pb-20 pt-12 lg:grid-cols-12 lg:gap-10 lg:pb-28 lg:pt-16">
-        <div className="min-w-0 lg:col-span-5">
+        <div className="min-w-0 lg:col-span-6 xl:col-span-5">
           <span data-testid="hero-location-badge" className="chip border-ember/40 bg-ember/10 text-ember">
             <MapPin className="h-3.5 w-3.5" />
             Llanfairpwllgwyngyll · Anglesey
           </span>
-          <h1 className="mt-7 font-blackletter text-6xl leading-[0.9] text-bone sm:text-7xl lg:text-[5.5rem]">
+          <h1 className="mt-7 font-blackletter text-[clamp(2.75rem,13vw,4.5rem)] leading-[0.9] text-bone lg:text-[clamp(3.75rem,6.2vw,5.5rem)]">
             Hunt the Abyss
           </h1>
-          <p className="mt-2 font-display text-4xl font-black uppercase leading-none tracking-tight text-ember-fade sm:text-5xl lg:text-6xl">
+          <p className="mt-2 font-display text-4xl font-black uppercase leading-none tracking-tight text-ember-fade sm:text-5xl lg:text-[clamp(2.5rem,4.2vw,3.75rem)]">
             At full volume
           </p>
           <p className="mt-7 max-w-xl text-lg leading-relaxed text-ash">
@@ -71,7 +71,7 @@ export function HeroSection({ equipment, onAddToCrate, onForgeCta, perf, paused,
           </dl>
         </div>
 
-        <div className="min-w-0 lg:col-span-7">
+        <div className="min-w-0 lg:col-span-6 xl:col-span-7">
           {heroItem && (
             <HeroStagePanel
               equipment={equipment}

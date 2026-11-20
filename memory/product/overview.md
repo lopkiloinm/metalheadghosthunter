@@ -22,6 +22,10 @@ A doom-metal ghost-hunting gear rental experience for Llanfairpwllgwyngyll (Angl
 | F-9 | Illustrated doom-metal overview map of Llanfairpwllgwyngyll (stylised SVG) with annotated hotspots, forge and routes | visitor/judge | 2 |
 | F-10 | Real interactive dark map (Leaflet + free dark OSM/CARTO tiles, no key) with hotspot markers + lore popups + Investigate, forge pickup marker, walking routes | visitor | 2 |
 | F-11 | Live field-log sightings pinned on the interactive map; new logs can carry a location | visitor | 2 |
+| F-12 | Ghosts: 3D spectral wraiths in the hero + inspector, 2D cursor-reactive apparitions across sections, rare surprise apparitions (silent, classy) | visitor/judge | 3 |
+| F-13 | Metal identity: album-cover chapter art, band-logo-style chapter titles, gear presented as an album tracklist (track names + runtimes) | visitor/judge | 3 |
+| F-14 | Heavier reactive synth: a riff/drone that responds to Test Fire | visitor | 3 |
+| F-15 | Fun interactions: devil-horns cursor, subtle headbang shake on add-to-crate, gig-ticket style booking pass | visitor | 3 |
 | F-8 | Intel tied into gear: suggests matching gear for the searched haunt (rule-based from the result keywords, no LLM) | visitor | 2 |
 
 ## Phases

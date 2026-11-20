@@ -67,6 +67,7 @@ export function HeroStagePanel({ equipment, heroItem, onSelectGear, overdrive, o
             cameraPreset={camera}
             paused={paused}
             webglSupported={perf.webglSupported}
+            wraiths={perf.haunting ? (perf.eco ? 1 : 3) : 0}
           />
           <div data-testid="hero-stage-status" className="pointer-events-none absolute left-5 top-5 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-void/75 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-bone backdrop-blur">
             <Radio className="h-3.5 w-3.5 animate-pulse text-ember" />

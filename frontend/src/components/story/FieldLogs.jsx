@@ -24,6 +24,7 @@ export function FieldLogs({ sightings, hotspots, equipment, pin, onRequestMapPin
     <section id="field-logs" data-testid="field-logs-section" className="shell scroll-mt-24 py-24 lg:py-32">
       <SectionHeader
         chapter="VI"
+        logo="Field Logs"
         overline="Field Logs"
         title="What the hunters heard"
         aside={

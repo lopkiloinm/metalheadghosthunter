@@ -5,7 +5,7 @@ import { EquipmentModel } from './EquipmentModel';
 import { GearFallback, WebGLBoundary } from './GearFallback';
 
 // Per-card 3D preview; the WebGL context only exists while the card is near the viewport.
-export function EquipmentCardViewport({ modelKey, accentColor, reducedMotion, eco, webglSupported, paused }) {
+export function EquipmentCardViewport({ modelKey, accentColor, reducedMotion, eco, webglSupported, paused, heightClass = 'h-60' }) {
   const ref = useRef(null);
   const [nearView, setNearView] = useState(false);
 
@@ -23,7 +23,7 @@ export function EquipmentCardViewport({ modelKey, accentColor, reducedMotion, ec
   const fallback = <GearFallback modelKey={modelKey} accentColor={accentColor} compact />;
 
   return (
-    <div ref={ref} className="relative h-60 w-full cursor-grab overflow-hidden bg-void active:cursor-grabbing" aria-label={`Interactive 3D preview: ${modelKey}`}>
+    <div ref={ref} className={`relative ${heightClass} w-full cursor-grab overflow-hidden bg-void active:cursor-grabbing`} aria-label={`Interactive 3D preview: ${modelKey}`}>
       <div className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(circle at 50% 60%, ${accentColor}26, transparent 65%)` }} />
       {!webglSupported ? (
         fallback

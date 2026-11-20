@@ -1,8 +1,8 @@
 import React from 'react';
 import { NAV_LINKS } from './navLinks';
-import { BookingsButton, CrateButton, EcoToggle, SynthToggle } from './NavControls';
+import { BookingsButton, CrateButton, EcoToggle, HauntingToggle, SynthToggle } from './NavControls';
 
-export function MobileMenu({ onClose, crateCount, onOpenCrate, onOpenBookings, synth, eco }) {
+export function MobileMenu({ onClose, crateCount, onOpenCrate, onOpenBookings, synth, eco, haunting }) {
   const run = (fn) => () => {
     onClose();
     fn();
@@ -29,6 +29,7 @@ export function MobileMenu({ onClose, crateCount, onOpenCrate, onOpenBookings, s
         <BookingsButton onClick={run(onOpenBookings)} testId="mobile-menu-bookings-button" wide />
         <SynthToggle active={synth.active} onToggle={synth.onToggle} testId="mobile-synth-toggle-button" wide />
         <EcoToggle eco={eco.on} isAuto={eco.isAuto} onToggle={eco.onToggle} testId="mobile-eco-toggle-button" wide />
+        <HauntingToggle on={haunting.on} onToggle={haunting.onToggle} testId="mobile-haunting-toggle-button" />
       </div>
     </div>
   );

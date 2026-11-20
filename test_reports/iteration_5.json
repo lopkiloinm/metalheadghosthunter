@@ -1,0 +1,32 @@
+{
+  "summary": "Iteration 5: Phase 3 Haunted & Metal makeover (JRN-32..43) plus regression smoke. Backend pytest 49/49 pass, including the new tests/test_phase3_tracklist.py: 6 items with trackNumber 1-6, trackName, mm:ss runtime, spiritbox = 'Static Communion', total runtime 52:47, and all 8 /assets files served. Frontend checks that pass: hero data-wraiths 3 in Ultra, 1 in Eco, 0 with haunting off; cyan WebGL shrouds are visible behind the model and the h1 is readable (elementFromPoint hits the h1). ?webgl=off shows the static ghost. All 6 chapter covers have naturalWidth 720 and object-cover and render square (250x250 at 1440, 188x188 at 375), each with a band-logo SVG and an h2. haunt-apparitions is fixed, z 0, pointer-events none, main is z 2, and 0 of 79 text elements were covered. Recoil works for apparitions 0-3 (recoiled=true, opacity 0) and resets when the mouse moves away. Tracklist has 6 rows (I-VI), Side A/B, 'Total runtime 52:47', and title, inspect and add all work. Cursor uses cursor-horns.svg on desktop and is plain pointer under touch (hover:none). Headbang: data-headbang true for about 609ms, toast shows, count 0->1, body and main have no animation. Ticket pass shows dates, setlist, stub, reference and a barcode SVG with 75 bars; view-bookings and close both work. Test Fire gives no console errors with the synth off or on (hero and inspector). Haunting toggle on desktop and mobile removes and restores ghosts and persists after reload. Eco gives 2 apparitions and no surprise. Reduced motion gives 2 static apparitions and no surprise. ?haunt=fast shows the surprise fog face (7s animation, z 1) within about 7s, and none appears while the crate is open or an input is focused. No horizontal scroll at 375 or 1440. Regression: live map (carto, 12 tiles, 9 markers) plus illustrated map, Intel quick-pick (1 /api/intel call, 3 results), My Bookings code lookup, field log post with a hotspot pin, and hero and inspector camera presets all pass. Fixed 1 bug: 3 band logos rendered nearly black.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "BandLogo.jsx", "issue": "FIXED by testing agent: the gradient id was `bl-${text}`, so 'Raid Planner', 'The Restless' and 'Field Logs' made ids with spaces. url(#bl-Raid Planner) is invalid, so the logo text fell back to a near-black fill and was almost invisible on the dark background. It now uses a sanitized gradId (bl-raid-planner etc.), verified by screenshot.", "selector": "[data-testid=band-logo-raid], [data-testid=band-logo-map], [data-testid=band-logo-fieldlogs]", "priority": "HIGH (fixed)"},
+      {"component": "Apparitions.jsx useRecoil", "issue": "With prefers-reduced-motion, apparitions are meant to be static, but useRecoil(refs, true) is always enabled. Mouse proximity still pushes them about 88px with a 700ms transition. Pass !reducedMotion (and maybe !eco) as the enabled flag.", "selector": "[data-testid^=apparition-] > div", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Tracklist rows (desktop)", "issues": ["The track-runtime column does not line up between rows. It sits at the end of the flexible title column, and the right-hand price/button column changes width ('Add' vs 'Crate 1', price widths), so the runtimes drift about 25px. Give the action column a fixed width or put the runtime in its own grid column."]},
+      {"screen": "SurpriseApparition", "issue_note": "Minor", "issues": ["A surprise that is already showing is not dismissed when an input gains focus (only crate, dialog and suppressed state clear it). No new ones spawn while focused, so this is acceptable. Optionally listen for focusin."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_phase3_tracklist.py", "/app/backend/tests/test_forge_api.py", "/app/backend/tests/test_map_api.py", "/app/backend/tests/test_map_tiles.py", "/app/backend/tests/test_intel_api.py", "/app/test_reports/pytest/pytest_results_iter5.xml"],
+  "action_items": [
+    "Disable apparition recoil under reduced motion: useRecoil(refs, !reducedMotion) in Apparitions.jsx",
+    "(design) Align the track-runtime column across tracklist rows",
+    "(carry-over from iteration_4, not retested) mobile touch sigil tap on the illustrated map, and minor tile-cache items"
+  ],
+  "critical_code_review_comments": [
+    "spectralSynth.playRiff wraps everything in try {} catch {} with no logging. 'No console errors' is therefore guaranteed and real audio bugs are hidden. Consider console.debug in the catch.",
+    "SurpriseApparition reads ?haunt=fast at module load. That is fine, but the flag ships in production. Gate it behind import.meta.env.DEV if it should be test-only.",
+    "BandLogo: any id built from user or display text must be sanitized (now fixed). The same pattern is worth checking in ApparitionShape (id a0..a3 is fine)."
+  ],
+  "updated_files": ["/app/frontend/src/components/ui/BandLogo.jsx", "/app/backend/tests/test_phase3_tracklist.py"],
+  "success_rate": {"backend": "100% (49/49)", "frontend": "~97% (all JRN-32..43 checks pass; 1 bug fixed, 1 low-priority reduced-motion recoil issue)"},
+  "seed_data_creation": "Created bookings PWLL-666-HIRP (TEST_TicketHunter) and PWLL-666-SIFA (TEST_TicketHunter2), plus sighting log-9395bd91 (TEST_Phase3Hunter). All 3 were deleted from Mongo by _id after checking that each hunterName starts with TEST_.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "pytest: cd /app/backend && export REACT_APP_BACKEND_URL=<frontend/.env> && pytest tests/ -p no:xdist. Camera preset testids: {hero|inspector}-camera-{hero|close|top}. Inspector Test Fire = inspector-test-fire-button (overdrive toggle); hero = hero-test-fire-button. My Bookings in the desktop popover = my-bookings-button. Intel chips = intel-chip-<id>. Field log: field-log-toggle-button opens the form; field-log-pin-select value 'hotspot'. To count surprise apparitions, use a MutationObserver that marks each new img; ?haunt=fast first appears at about 4-7s. Booking codes look like PWLL-666-XXXX. Mongo collections: bookings, sightings."
+}

@@ -13,7 +13,8 @@ export default {
         spectral: { DEFAULT: '#3ff2e3', deep: '#0f4f4a' },
         brass: '#d9a85b',
         bone: '#ede8df',
-        ash: '#a7a197',
+        ash: '#aaa49b',
+        dim: '#7a736c',
         danger: '#ff6b6b',
       },
       fontFamily: {

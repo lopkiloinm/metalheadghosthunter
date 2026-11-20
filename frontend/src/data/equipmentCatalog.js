@@ -7,6 +7,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-emf-666',
     slug: 'doomspike-emf',
+    trackNumber: 1,
+    trackName: 'Sixty-Six Milligauss',
+    runtime: '06:06',
     modelKey: 'emf',
     name: 'K-II "DOOMSPIKE" EMF METER',
     subtitle: 'Model 666-MKIV Electromagnetic Field Detector',
@@ -31,6 +34,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-spiritbox-7',
     slug: 'necro-sweep-spiritbox',
+    trackNumber: 2,
+    trackName: 'Static Communion',
+    runtime: '07:13',
     modelKey: 'spiritbox',
     name: 'SBM-7 "NECRO-SWEEP" SPIRIT BOX',
     subtitle: 'Reverse-Sweep AM/FM ITC Radio Transceiver',
@@ -55,6 +61,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-thermal-sls',
     slug: 'abyssal-thermal-sls',
+    trackNumber: 3,
+    trackName: 'Cold Spot Cathedral',
+    runtime: '09:42',
     modelKey: 'thermal',
     name: 'SLS-X "ABYSSAL RIG" THERMAL & LIDAR',
     subtitle: 'Infrared Thermal + Structured Light Skeleton Mapper',
@@ -79,6 +88,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-rempod-iron',
     slug: 'iron-maiden-rempod',
+    trackNumber: 4,
+    trackName: 'Hex Tower Liturgy',
+    runtime: '11:11',
     modelKey: 'rempod',
     name: 'REM-POD "IRON MAIDEN" BEACON',
     subtitle: '360° Radiating Static Field & Cold-Spot Alarm Tower',
@@ -103,6 +115,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-pentagrid-laser',
     slug: 'pentagrid-laser-matrix',
+    trackNumber: 5,
+    trackName: 'Emerald Grid of the Dead',
+    runtime: '05:32',
     modelKey: 'laser',
     name: 'SLS-LASER "PENTAGRID" PROJECTOR',
     subtitle: '532nm Emerald Spectral Matrix Emitter',
@@ -127,6 +142,9 @@ export const FALLBACK_EQUIPMENT = [
   {
     id: 'eq-evp-blacktape',
     slug: 'black-tape-parabolic-evp',
+    trackNumber: 6,
+    trackName: 'Ferric Tape Requiem',
+    runtime: '13:03',
     modelKey: 'evp',
     name: 'EVP-8 "BLACK TAPE" PARABOLIC RIG',
     subtitle: 'Sub-Bass Infrasound Parabolic Dish & Analog Reel Deck',

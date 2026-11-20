@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Leaf, MoreHorizontal, ScrollText, Volume2, VolumeX, Zap, BookOpen } from 'lucide-react';
+import { BookOpen, Ghost, Leaf, MoreHorizontal, ScrollText, Volume2, VolumeX, Zap } from 'lucide-react';
 import { cx } from '../../lib/format';
 
 function MenuRow({ icon: Icon, label, hint, on, testId, onClick, href }) {
@@ -19,7 +19,7 @@ function MenuRow({ icon: Icon, label, hint, on, testId, onClick, href }) {
   );
 }
 
-export function NavMenu({ onOpenBookings, synth, eco, backendOnline }) {
+export function NavMenu({ onOpenBookings, synth, eco, haunting, backendOnline }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -42,7 +42,7 @@ export function NavMenu({ onOpenBookings, synth, eco, backendOnline }) {
         data-testid="navbar-utility-menu-button"
         aria-haspopup="true"
         aria-expanded={open}
-        aria-label="More: bookings, synth and 3D quality"
+        aria-label="More: bookings, synth, 3D quality and haunting"
         onClick={() => setOpen((o) => !o)}
         className={cx('btn-icon', open && 'border-bone/40 text-bone')}
       >
@@ -70,6 +70,7 @@ export function NavMenu({ onOpenBookings, synth, eco, backendOnline }) {
             testId="eco-mode-toggle-button"
             onClick={eco.onToggle}
           />
+          <MenuRow icon={Ghost} label="Haunting" hint={haunting.on ? 'On' : 'Off'} on={haunting.on} testId="haunting-toggle-button" onClick={haunting.onToggle} />
           <p className="mt-1.5 flex items-center gap-2 border-t border-white/[0.07] px-3 pb-1 pt-2.5 font-mono text-[10px] uppercase tracking-widest text-ash">
             <span data-testid="backend-status-indicator" className={cx('h-1.5 w-1.5 rounded-full', backendOnline ? 'bg-spectral' : 'bg-brass')} />
             {backendOnline ? 'Forge online' : 'Offline mode · local data'}

@@ -48,7 +48,7 @@ export function MapSection({ hotspots, sightings, pin, onInvestigate, onPinSight
   return (
     <section id="map" ref={ref} data-testid="map-section" className="relative scroll-mt-24 py-24 lg:py-32">
       <div className="shell">
-        <SectionHeader chapter="IV·II" overline="Map of the Restless" title="Charting the restless dead of Llanfairpwll">
+        <SectionHeader chapter="IV·II" overline="Map of the Restless" logo="The Restless" title="Charting the restless dead of Llanfairpwll">
           <p>Two charts for one village. The forge-burnt overview reads the land at a glance. The live map walks you from the Forge to every haunt along real footpaths.</p>
         </SectionHeader>
 

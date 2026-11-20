@@ -1,0 +1,28 @@
+# Phase 3 Journeys (JRN-1..31 stay valid, except the gear catalog layout, which changes to a tracklist while keeping all of JRN-2's data)
+
+- **JRN-32**: Load the home page.
+  - Expected: translucent wraiths drift in the hero 3D scene (or a static ghost in the WebGL-off fallback), and the headline stays fully readable.
+- **JRN-33**: Scroll through the story chapters.
+  - Expected: each chapter has its own album-cover artwork and a band-logo style title. 2D apparitions drift behind the content without covering any text.
+- **JRN-34**: On desktop, move the cursor toward a 2D apparition.
+  - Expected: it recoils or fades.
+- **JRN-35**: View the gear catalog.
+  - Expected: it reads as an album tracklist. Each of the 6 rigs has a track number, a track name, a runtime, the real product name and a price per night, and opening one still opens the inspector.
+- **JRN-36**: Hover a button or link on desktop.
+  - Expected: a devil-horns cursor shows. On a touch device the cursor is unchanged.
+- **JRN-37**: Add an item to the crate.
+  - Expected: the crate button does a short headbang shake, and the toast and badge +1 still happen.
+- **JRN-38**: Complete a booking.
+  - Expected: a gig-ticket style pass shows with the booking reference, dates, gear setlist, perforated stub and barcode graphic.
+- **JRN-39**: Turn the synth on, open the inspector and click Test Fire.
+  - Expected: a heavier riff or drone burst plays. With the synth off it stays silent, and there are no console errors either way.
+- **JRN-40**: Turn off "Haunting" in the ⋯ menu.
+  - Expected: all ghosts disappear. Turning it back on brings them back.
+- **JRN-41**: Use reduced motion or Eco mode.
+  - Expected: ghosts are static or minimal, and no surprise apparition appears.
+- **JRN-42**: Stay on the page for about 2.5 minutes with no modal open.
+  - Expected: one silent surprise apparition fades in and out. With the crate drawer open, none appears.
+- **JRN-43**: View the page at 375px and 1440px.
+  - Expected: no horizontal scroll, the art isn't stretched, and the text is readable.
+- **JRN-44**: View the whole page at intermediate widths (600, 768, 900, 1024, 1180, 1280) and at tablet landscape 1024x768.
+  - Expected: no horizontal scroll and no overlapping or clipped text. The hero, chapter headers, tracklist, maps, Intel grid, header, inspector, crate drawer and ticket pass all look intentionally laid out at every width.

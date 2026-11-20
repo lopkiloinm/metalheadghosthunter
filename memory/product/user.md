@@ -6,3 +6,5 @@
 - integration: You.com Search API (own key, YDC_API_KEY saved)
 - cares about 3D model craftsmanship (reported projector tripod legs not connected) — audit all models for assembly quality
 - unknown: hackathon theme/deadline/judging criteria (skipped)
+- taste: moody/classy over spectacle; wants strong metal identity (album art, tracklist, riffs)
+- cares about responsiveness across ALL widths incl. tablet/intermediate; sensitive to readability (reported black text)

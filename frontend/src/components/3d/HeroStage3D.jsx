@@ -6,6 +6,7 @@ import { EquipmentModel } from './EquipmentModel';
 import { GearFallback, WebGLBoundary } from './GearFallback';
 import { RiftFloor, RisingEmbers, RuneHalo } from './StageAtmosphere';
 import { StageEffects } from './StageEffects';
+import { WraithChoir } from './Wraith';
 
 function StudioLights({ accentColor, overdrive, eco }) {
   return (
@@ -25,12 +26,13 @@ function StudioLights({ accentColor, overdrive, eco }) {
   );
 }
 
-function StageScene({ modelKey, accentColor, overdrive, reducedMotion, eco, cameraPreset }) {
+function StageScene({ modelKey, accentColor, overdrive, reducedMotion, eco, cameraPreset, wraiths = 0, wraithLayout = 'hero' }) {
   return (
     <>
       <color attach="background" args={['#07070a']} />
       <fog attach="fog" args={['#07070a', 7, 15]} />
       <StudioLights accentColor={accentColor} overdrive={overdrive} eco={eco} />
+      {wraiths > 0 && <WraithChoir count={wraiths} layout={wraithLayout} eco={eco} reducedMotion={reducedMotion} />}
       <EquipmentModel modelKey={modelKey} overdrive={overdrive} reducedMotion={reducedMotion} autoRotate={!reducedMotion} />
       <RuneHalo accentColor={accentColor} overdrive={overdrive} reducedMotion={reducedMotion} />
       <RiftFloor accentColor={accentColor} overdrive={overdrive} reducedMotion={reducedMotion} />
@@ -46,9 +48,9 @@ function StageScene({ modelKey, accentColor, overdrive, reducedMotion, eco, came
 
 export function HeroStage3D({ webglSupported = true, paused = false, className = '', testId = 'stage-canvas', ...scene }) {
   const { modelKey, accentColor, eco, reducedMotion } = scene;
-  const fallback = <GearFallback modelKey={modelKey} accentColor={accentColor} />;
+  const fallback = <GearFallback modelKey={modelKey} accentColor={accentColor} ghost={scene.wraiths > 0} />;
   return (
-    <div className={`relative w-full ${className}`} data-testid={testId} data-eco={eco ? 'on' : 'off'}>
+    <div className={`relative w-full ${className}`} data-testid={testId} data-eco={eco ? 'on' : 'off'} data-wraiths={scene.wraiths || 0}>
       {webglSupported ? (
         <WebGLBoundary fallback={fallback}>
           <Canvas

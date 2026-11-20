@@ -10,7 +10,7 @@ export function BundlesSection({ bundles, equipment, onLoadBundle }) {
 
   return (
     <section id="bundles" data-testid="bundles-section" className="shell scroll-mt-24 py-24 lg:py-32">
-      <SectionHeader chapter="III" overline="Coven Loadouts" title="Pre-forged rigs for the whole band">
+      <SectionHeader chapter="III" overline="Coven Loadouts" logo="Loadouts" title="Pre-forged rigs for the whole band">
         <p>
           Hunting as a crew? Load a bundle in one click. Stack it with the automatic{' '}
           <strong className="text-brass">15% Riff Lord discount</strong> on 3+ nights.

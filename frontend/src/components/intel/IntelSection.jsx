@@ -23,7 +23,7 @@ export function IntelSection({ hotspots, equipment, request, onAddToCrate }) {
     <section id="intel" data-testid="intel-section" className="relative scroll-mt-24 py-24 lg:py-32">
       <div aria-hidden="true" className="scanlines pointer-events-none absolute inset-0 opacity-40" />
       <div className="shell relative">
-        <SectionHeader chapter="V" overline="Spectre Intel · live" title="Summon the lore of any haunt">
+        <SectionHeader chapter="V" overline="Spectre Intel · live" logo="Intel" title="Summon the lore of any haunt">
           <p>Live dispatches from the web on any haunted place, read through our spectral filter. Every dossier names the rigs it calls for.</p>
         </SectionHeader>
 

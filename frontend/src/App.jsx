@@ -20,6 +20,8 @@ import { EquipmentInspectorModal } from './components/inspector/EquipmentInspect
 import { RentalCrateDrawer } from './components/crate/RentalCrateDrawer';
 import { BookingsModal } from './components/bookings/BookingsModal';
 import { Toaster } from './components/ui/Toaster';
+import { Apparitions } from './components/haunt/Apparitions';
+import { SurpriseApparition } from './components/haunt/SurpriseApparition';
 
 export default function App() {
   const perf = usePerformanceMode();
@@ -34,7 +36,17 @@ export default function App() {
   const [targetHotspot, setTargetHotspot] = useState('');
   const [intelRequest, setIntelRequest] = useState(null);
   const [logPin, setLogPin] = useState(null);
+  const [haunting, setHaunting] = useState(() => localStorage.getItem('spectre-haunting') !== 'off');
   const overlayOpen = crateOpen || bookingsOpen || Boolean(inspectedItem);
+  const hauntPerf = { ...perf, haunting };
+
+  function toggleHaunting() {
+    setHaunting((on) => {
+      localStorage.setItem('spectre-haunting', on ? 'off' : 'on');
+      notify(on ? 'Haunting dispelled. The spirits rest' : 'Haunting summoned. Something stirs');
+      return !on;
+    });
+  }
 
   useEffect(() => () => spectralSynth.stopDoomDrone(), []);
 
@@ -99,6 +111,8 @@ export default function App() {
       <Preloader reducedMotion={perf.reducedMotion} />
       <ScrollProgress />
       <div aria-hidden="true" className="grain pointer-events-none fixed inset-0 z-[55]" />
+      {haunting && <Apparitions eco={perf.eco} reducedMotion={perf.reducedMotion} />}
+      <SurpriseApparition enabled={haunting && !perf.eco && !perf.reducedMotion} suppressed={overlayOpen} />
 
       <Navbar
         crateCount={crate.count}
@@ -107,10 +121,11 @@ export default function App() {
         synth={{ active: droneActive, onToggle: toggleDrone }}
         eco={{ on: perf.eco, isAuto: perf.ecoIsAuto, onToggle: toggleEco }}
         backendOnline={data.online}
+        haunting={{ on: haunting, onToggle: toggleHaunting }}
       />
 
-      <main>
-        <HeroSection equipment={data.equipment} onAddToCrate={addToCrate} onForgeCta={goToArmoury} perf={perf} paused={overlayOpen} soundOn={droneActive} />
+      <main className="relative z-[2]">
+        <HeroSection equipment={data.equipment} onAddToCrate={addToCrate} onForgeCta={goToArmoury} perf={hauntPerf} paused={overlayOpen} soundOn={droneActive} />
         <CatalogSection equipment={data.equipment} crateItems={crate.items} onInspect={setInspectedItem} onAddToCrate={addToCrate} perf={perf} paused={overlayOpen} />
         <BundlesSection bundles={data.bundles} equipment={data.equipment} onLoadBundle={loadBundle} />
         <HauntedHotspots
@@ -135,9 +150,11 @@ export default function App() {
         />
       </main>
 
-      <Footer backendOnline={data.online} storageMode={data.storageMode} />
+      <div className="relative z-[2]">
+        <Footer backendOnline={data.online} storageMode={data.storageMode} />
+      </div>
 
-      <EquipmentInspectorModal item={inspectedItem} onClose={closeInspector} onAddToCrate={addToCrate} perf={perf} soundOn={droneActive} />
+      <EquipmentInspectorModal item={inspectedItem} onClose={closeInspector} onAddToCrate={addToCrate} perf={hauntPerf} soundOn={droneActive} />
       <RentalCrateDrawer
         open={crateOpen}
         onClose={closeCrate}
